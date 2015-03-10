@@ -7,10 +7,14 @@ This Node.js project attempts to simplify
 * Regression testing to check if former issues have re-surfaced when a website is updated
 
 We will define a server/service that can run in the background or on a dedicated machine. This service will accept
-* One or more URLs for exploratory testing
-* One or more bug numbers for regression testing
+* An URLs for exploratory testing
+* A bug number for regression testing
 * JSON data for regression testing
-* Link to a bug search for regression testing and/or status updates (initial support for Bugzilla, webcompat.com, GitHub)
+
+A master script controlling the testing will additionally accept
+* Text file of URLs for batch exploratory testing
+* List of bug numbers for batch regression testing
+* Link to a bug search for regression testing and/or analysis (and/or status updates) (initial support should include Bugzilla, webcompat.com, GitHub)
 
 The service will run SlimerJS or PhantomJS to be able to run tests on a fully fledged web browser. The service must be able to spoof the User-Agent and emulate mobile screen sizes.
 
@@ -34,27 +38,33 @@ DONE:
 * Module to create bug:URL list from bug search – for example BugdataExtractor.extractFromURL('https://..').then()
 * Module to check if wap content is served – WAPCheck.check(url, ua).then() (This check does not require or invoke a full browser)
 * Module to check XHTML parsing with a real XML parser (This check does not require or invoke a full browser)
-* Module to check redirects (This check does not require or invoke a full browser, given that we emulate a browser's request headers well enough)
+* Module to check redirects (This check does not require or invoke a full browser, but it does assume that we can emulate a browser's request headers well enough)
 
 ROADMAP:
-* Import and refactor Hallvord's slimertester.js, add a web server that can accept commands
+* Import and refactor Hallvord's slimertester.js, add a web server that can accept commands from Node controller
+ - Issue: can we pass messages directly to the SlimerJS/PhantomJS process? Would that be better than adding a web server?
 * Module to send commands to the script that controls SlimerJS/PhantomJS (to said web server via http)
-* Module to keep track of a batch of URLs/bug numbers/test data and open the next one when client is ready – client.is_busy().then()
-* Result comparison module – outputs a webcomptest JSON fragment for human review and future regression testing. Referring to "bad problems" above, the result comparison should output a "pass/fail" and a fragment of JSON and/or JS code that can be used to re-verify the pass or failure in a single-instance test.
+- Issue: steps in slimertester.js need to be async. Response of web server can't (presumably) wait for all the async stuff to finish, neither can the (limited) web server implementation in SlimerJS/PhantomJS keep fetching data from an on-going testing and send back to the master as server-sent events or similar. Requires polling.
+* Module ("Node controller" to keep track of a batch of URLs/bug numbers/test data and open the next one when client is ready – client.is_done().then()? Knows how to run different test types - i.e. will use WMLCheck or RedirectCheck directly. Might combine different tests but should report results with as much granularity as possible.
+* Add light web server w/UI to send commands to the Node controller?
+* Result comparison module + 
+* Result snapshoting module - outputs a webcomptest JSON fragment for human review and future regression testing. Referring to "bad problems" above, the result comparison should output a "pass/fail" and a fragment of JSON and/or JS code that can be used to re-verify the pass or failure in a single-instance test. The problem with generating static tests is always the amount of noise in test results due to changing sites. If "generating" the test is semi-automated and the test itself only needs re-generating and a light human review when the site changes without fixing the issue, this is no longer a big problem.
+* Database storage of results - particularly things like URLs of HTTP resources blocked on HTTPS pages, JavaScript errors, -web-kit styles that need replacements - with a good database, even complicated new problems might be easily classified if we've seen a similar thing before.
 
-COMMANDS THE SERVICE SHOULD SUPPORT:
-* load_url_regression_test(url, bugdata) - tests only in one instance (SlimerJS or PhantomJS), according to bugdata
-* load_url_exploration_test(url)  - tests both in SlimerJS and PhantomJS, returns test_id that can be passed to many of the other methods
+
+COMMANDS THE SLIMER/PHANTOM SERVICE SHOULD SUPPORT:
+* load_url_regression_test(url, bugdata) - tests only in one instance (SlimerJS or PhantomJS), according to bugdata, returns req_id that can be passed to many of the other methods
+* load_url_exploration_test(url)  - tests both in SlimerJS and PhantomJS, returns req_id that can be passed to many of the other methods
 * click(selector)
 * scroll(x,y)
-* is_busy() - false only when both devices are done testing
-* get_testresults(test_id)   true/false, comment - MAYBE. We should perhaps rather have get_data() and leave the "result" part to the comparison module?
-* get_last_test_id()
-* get_screenshots(test_id)  - returns {slimer:'data:image/png;base64,..', phantom:'data:..'}
-* get_mixedcontentresults(test_id) - for https only, a list of http resources included
-* get_pluginresults(test_id) - all results from the plugin architecture in a JSON format
-* get_cssresults(test_id) - data from the algorithm for detecting specific CSS issues
-* get_consoleresults(test_id) - data from the console log (i.e. JS errors) 
+* is_done() - true only when both devices are done testing
+* get_testresults(req_id)   true/false, comment - MAYBE. We should perhaps rather have get_data() and leave the "result" part to the comparison module?
+* get_last_req_id()
+* get_screenshots(req_id)  - returns {slimer:'data:image/png;base64,..', phantom:'data:..'}
+* get_mixedcontentresults(req_id) - for https only, a list of http resources included
+* get_pluginresults(req_id) - all results from the plugin architecture in a JSON format
+* get_cssresults(req_id) - data from the algorithm for detecting specific CSS issues
+* get_consoleresults(req_id) - data from the console log (i.e. JS errors) 
 
 WEB COMPATIBILITY TEST DATA FORMAT
 
