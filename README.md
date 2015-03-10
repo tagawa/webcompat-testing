@@ -44,7 +44,7 @@ ROADMAP:
 * Import and refactor Hallvord's slimertester.js, add a web server that can accept commands from Node controller
  - Issue: can we pass messages directly to the SlimerJS/PhantomJS process? Would that be better than adding a web server?
 * Module to send commands to the script that controls SlimerJS/PhantomJS (to said web server via http)
-- Issue: steps in slimertester.js need to be async. Response of web server can't (presumably) wait for all the async stuff to finish, neither can the (limited) web server implementation in SlimerJS/PhantomJS keep fetching data from an on-going testing and send back to the master as server-sent events or similar. Requires polling.
+ - Issue: steps in slimertester.js need to be async. Response of web server can't (presumably) wait for all the async stuff to finish, neither can the (limited) web server implementation in SlimerJS/PhantomJS keep fetching data from an on-going testing and send back to the master as server-sent events or similar. Requires polling.
 * Module ("Node controller" to keep track of a batch of URLs/bug numbers/test data and open the next one when client is ready – client.is_done().then()? Knows how to run different test types - i.e. will use WMLCheck or RedirectCheck directly. Might combine different tests but should report results with as much granularity as possible.
 * Add light web server w/UI to send commands to the Node controller?
 * Result comparison module + 
