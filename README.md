@@ -26,7 +26,7 @@ The service will support generating screenshots.
 
 We define a set of "bad" problems that will cause a site to get classified as failed. These include at least:
 
-* flexbox webkit stuff w/o equivalents in a selector that is applied on any of the pages we visit
+* flexbox and background webkit properties w/o equivalents in a selector that is applied on any of the pages we visit
 * JavaScript errors thrown in a browser we care about that do not occur with a different engine
 * Dependency on Flash content or other plugin stuff w/o equivalents (i.e. OBJECT w/o VIDEO tag)
 * If a page has a video, it must play without errors
