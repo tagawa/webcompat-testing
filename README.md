@@ -88,15 +88,16 @@ See [sitecomptester-extension's README](https://github.com/hallvors/sitecomptest
 slimertester.js: 
 
 Supports misc test types 
+
     * XHR/WAP
     * mixed content
     * regression
     * exploration
-Reads webcomptest JSON format.
-Can track console errors.
-Outputs test results.
-Batch mode for regression tests
-Can run both SlimerJS and PhantomJS (but not really control them.. yet)
+* Reads webcomptest JSON format.
+* Can track console errors.
+* Outputs test results.
+* Batch mode for regression tests
+* Can run both SlimerJS and PhantomJS (but not really control them.. yet)
 
 testsites.py:
 * Generates, compares, splices screenshots.
