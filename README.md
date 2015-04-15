@@ -87,8 +87,7 @@ See [sitecomptester-extension's README](https://github.com/hallvors/sitecomptest
 
 slimertester.js: 
 
-Supports misc test types 
-
+* Supports misc test types 
     * XHR/WAP
     * mixed content
     * regression
